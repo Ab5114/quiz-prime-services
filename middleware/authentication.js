@@ -1,36 +1,34 @@
- 
+const User = require("../models/user");  
+
 const authenticateUser = async (req, res, next) => {
   try {
-     console.log("Cookies:", req.cookies);
+    console.log("Cookies received:", req.cookies);
 
     const userId = req.cookies.userId;
-    console.log("userId:", userId); // Log the value of userId
-
     if (!userId) {
-      console.log("No userId cookie found, Unauthorized");
-      return res.status(401).json({ error: "Unauthorized" });
+      console.error("No userId cookie found, Unauthorized");
+      return res.status(401).json({ error: "Unauthorized - No userId cookie" });
     }
 
-    // Log the userId
-    console.log("Authenticated userId:", userId);
+    let user = await User.findById(userId);
 
-  
+     if (!user) {
+      console.log("New user detected, creating user...");
+      user = new User({ _id: userId, quizzes: [] });  
+      await user.save();
+    }
+
     req.user = user;  
-    console.log("Attached user to req");
+    console.log("Authenticated user:", user);
 
-    next(); // Move to the next middleware/handler
+    next();  
   } catch (error) {
     console.error("Error in authenticateUser:", error);
     res.status(500).json({ error: "Internal server error" });
   }
 };
 
-
-
-
- 
 const checkAuth = async (req, res) => {
-   
   if (req.user) {
     return res.json({ isAuthenticated: true, user: req.user });
   } else {
@@ -38,6 +36,4 @@ const checkAuth = async (req, res) => {
   }
 };
 
-
- 
-module.exports = {checkAuth,authenticateUser};
+module.exports = { checkAuth, authenticateUser };
