@@ -103,8 +103,7 @@ const isProduction = process.env.NODE_ENV === "production";
  
 res.cookie("userId", user._id.toString(), {
   httpOnly: true,
-  secure: isProduction, 
-  sameSite: "None", 
+   sameSite: "None", 
   maxAge: 24 * 60 * 60 * 1000,
   path: "/", 
  });
