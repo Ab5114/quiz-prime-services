@@ -98,12 +98,16 @@ router.post("/signin", async (req, res) => {
     if (!isMatch) {
       return res.status(400).json({ error: "Invalid email or password." });
     }
+const isProduction = process.env.NODE_ENV === "production";
 
-    res.cookie("userId", user._id.toString(), {
-      httpOnly: true,
-      sameSite: "lax",
-      maxAge: 24 * 60 * 60 * 1000,
-    });
+res.cookie("userId", user._id.toString(), {
+  httpOnly: true,
+  secure: isProduction,  
+  sameSite: isProduction ? "None" : "Lax",  
+  maxAge: 24 * 60 * 60 * 1000,  
+  path: "/",  
+});
+
 
     res.status(200).json({ message: "Login successful." });
   } catch (error) {

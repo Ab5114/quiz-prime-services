@@ -1,8 +1,7 @@
  
 const authenticateUser = async (req, res, next) => {
   try {
-    // Log all cookies
-    console.log("Cookies:", req.cookies);
+     console.log("Cookies:", req.cookies);
 
     const userId = req.cookies.userId;
     console.log("userId:", userId); // Log the value of userId
@@ -15,10 +14,8 @@ const authenticateUser = async (req, res, next) => {
     // Log the userId
     console.log("Authenticated userId:", userId);
 
-    // You might want to fetch user details from DB or use userId as needed:
-    // const user = await getUserFromDB(userId); (example, based on your logic)
-
-    req.user = user; // You need to define `user`, probably by fetching from DB
+  
+    req.user = user;  
     console.log("Attached user to req");
 
     next(); // Move to the next middleware/handler
