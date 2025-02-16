@@ -139,7 +139,7 @@ router.delete("/delete-quiz/:quizId", async (req, res) => {
 router.put("/edit-quiz/:id", async (req, res) => {
   try {
     const quizId = req.params.id;
-    const updatedQuiz = req.body; // Contains title, description, and questions
+    const updatedQuiz = req.body;  
 
     const quiz = await Quiz.findByIdAndUpdate(quizId, updatedQuiz, {
       new: true,
@@ -162,6 +162,6 @@ router.post("/logout",(req,res)=>{
 })
 
 
-router.get("/checkAuth", checkAuth);
+router.get("/checkAuth", authenticateUser,checkAuth);
 
 module.exports = router;

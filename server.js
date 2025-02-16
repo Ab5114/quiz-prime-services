@@ -12,22 +12,20 @@ app.use(express.json());
 
 app.use(cookieParser());
 const allowedOrigins = [
-  "https://quizzy-prime.vercel.app", // Production frontend
-  "http://localhost:3000", // Localhost for development
+  "https://quizzy-prime.vercel.app",
+  "http://localhost:3001",
 ];
 
 app.use(
   cors({
-    origin: function (origin, callback) {
-      if (allowedOrigins.indexOf(origin) !== -1 || !origin) {
-        // Allow requests from allowed origins or if there is no origin (e.g., Postman)
+    origin: (origin, callback) => {
+       if (allowedOrigins.includes(origin) || !origin) {
         callback(null, true);
       } else {
-        // Block any origin that is not allowed
         callback(new Error("Not allowed by CORS"));
       }
     },
-    credentials: true, // Allow cookies/credentials
+    credentials: true,  
   })
 );
 
