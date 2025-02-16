@@ -8,7 +8,7 @@ const mongoose=require("mongoose");
 const userRoutes = require("./routes/user");
 const cors = require("cors");
 const cookieParser = require("cookie-parser");
-
+ 
 
 
  
@@ -28,7 +28,7 @@ mongoose.connect(process.env.MONGO_URI)
   .catch((err) => console.error("Error connecting to MongoDB", err));
 
  
-app.use("/user",userRoutes);
+app.use("/user" ,userRoutes);
 
  
 const PORT=process.env.PORT || 5000;
