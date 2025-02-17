@@ -9,6 +9,10 @@ const {checkAuth, requireAuth, authenticateUser} = require("../middleware/authen
  
 router.use(authenticateUser);
 
+const isProduction = process.env.NODE_ENV === "production";
+
+console.log("isProduction ", isProduction);
+
 router.get("/quizzes",requireAuth, async (req, res) => {
  
   try {
@@ -27,7 +31,7 @@ router.post("/create-quiz", requireAuth, async (req, res) => {
   try {
     const { title, description, questions } = req.body;
 
-    if (!title || !description || !question) {
+    if (!title || !description) {
       return res.status(400).json({
         error:
           "All fields are required.",
@@ -97,13 +101,13 @@ router.post("/signin", async (req, res) => {
       return res.status(400).json({ error: "Invalid email or password." });
     }
  
- 
 res.cookie("userId", user._id.toString(), {
   httpOnly: true,
-   sameSite: "None", 
-  maxAge: 24 * 60 * 60 * 1000,
-  path: "/", 
- });
+  sameSite: "None",
+  secure:isProduction,
+   maxAge: 24 * 60 * 60 * 1000,
+  path: "/",
+});
 
 
 
@@ -154,7 +158,7 @@ router.put("/edit-quiz/:id", requireAuth,async (req, res) => {
 
 
 router.post("/logout",(req,res)=>{
-   res.clearCookie("userId", { path: "/", sameSite: "None" });
+   res.clearCookie("userId", { path: "/", sameSite: "None",secure:isProduction});
    res.json({ message: "Logged out successfully" });  
 })
 

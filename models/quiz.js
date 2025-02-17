@@ -18,23 +18,34 @@ const quizSchema = new mongoose.Schema({
     ref: "user",
     required: true,
   },
-  questions: [
-    {
-      question_text: {
-        type: String,
-        required: true,
+  questions: {
+    type: [
+      {
+        question_text: {
+          type: String,
+          required: function () {
+            return this.questions && this.questions.length > 0;
+          },
+          validate: {
+            validator: function (value) {
+              return value.trim().length > 0;  
+            },
+            message: "Question text cannot be empty.",
+          },
+        },
+        options: {
+          type: [String],
+          required: true,
+        },
+        correct_index: {
+          type: Number,
+          required: true,
+        },
       },
-      options: {
-        type: [String], // Allows any number of options
-        required: true,
-      },
-      correct_index: {
-        type: Number,
-        required: true,
-        
-      },
-    },
-  ],
+    ],
+
+    default: [],
+  },
 });
 
 const Quiz = mongoose.model("quiz", quizSchema);
