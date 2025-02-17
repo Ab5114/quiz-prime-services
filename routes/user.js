@@ -5,18 +5,16 @@ const bcrypt = require("bcrypt");
 const router = Router();
 const User = require("../models/user");
 const Quiz = require("../models/quiz");
-const {authenticateUser ,checkAuth} = require("../middleware/authentication");
+const {checkAuth, requireAuth, authenticateUser} = require("../middleware/authentication");
  
-router.get("/quizzes", authenticateUser, async (req, res) => {
-        console.log("hellohellohellohellohello1234444");
+router.use(authenticateUser);
 
+router.get("/quizzes",requireAuth, async (req, res) => {
+ 
   try {
     const userId = req.user._id;
 
-    if (!userId) {
-      return res.status(401).json({ error: "Unauthorized" });
-    }
-    console.log("authorized  ")
+     
      const quizzes = await Quiz.find({ created_By: userId });  
     res.status(200).json(quizzes);
   } catch (error) {
@@ -24,15 +22,15 @@ router.get("/quizzes", authenticateUser, async (req, res) => {
   }
 });
 
-router.post("/create-quiz", authenticateUser, async (req, res) => {
+router.post("/create-quiz", requireAuth, async (req, res) => {
  
   try {
     const { title, description, questions } = req.body;
 
-    if (!title || !description || !questions || questions.length === 0) {
+    if (!title || !description || !question) {
       return res.status(400).json({
         error:
-          "All fields are required, and at least one question must be added.",
+          "All fields are required.",
       });
     }
 console.log(req.body);
@@ -81,7 +79,7 @@ router.post("/signup", async (req, res) => {
 });
 
 router.post("/signin", async (req, res) => {
-      if (req.user) {alert("Already logged In"); return res.status(404).json("Already logged In");}
+       if (req.user) { return res.status(404).json("Already logged In");}
   try {
     const { email, password } = req.body;
 
@@ -91,15 +89,14 @@ router.post("/signin", async (req, res) => {
 
     const user = await User.findOne({ email });
     if (!user) {
-      return res.status(400).json({ error: "Invalid email or password." });
+      return res.status(400).json({ error: "User not Signed in." });
     }
 
     const isMatch = await bcrypt.compare(password, user.password);
     if (!isMatch) {
       return res.status(400).json({ error: "Invalid email or password." });
     }
-const isProduction = process.env.NODE_ENV === "production";
-
+ 
  
 res.cookie("userId", user._id.toString(), {
   httpOnly: true,
@@ -119,7 +116,7 @@ res.cookie("userId", user._id.toString(), {
 
 
 
-router.delete("/delete-quiz/:quizId", async (req, res) => {
+router.delete("/delete-quiz/:quizId", requireAuth,async (req, res) => {
   try {
     const { quizId } = req.params;
     const deletedQuiz = await Quiz.findByIdAndDelete(quizId);
@@ -136,7 +133,7 @@ router.delete("/delete-quiz/:quizId", async (req, res) => {
 
 
 
-router.put("/edit-quiz/:id", async (req, res) => {
+router.put("/edit-quiz/:id", requireAuth,async (req, res) => {
   try {
     const quizId = req.params.id;
     const updatedQuiz = req.body;  
@@ -157,11 +154,11 @@ router.put("/edit-quiz/:id", async (req, res) => {
 
 
 router.post("/logout",(req,res)=>{
-   res.clearCookie("userId", { path: "/", sameSite: "lax" });
+   res.clearCookie("userId", { path: "/", sameSite: "None" });
    res.json({ message: "Logged out successfully" });  
 })
 
 
-router.get("/checkAuth", authenticateUser,checkAuth);
+router.get("/checkAuth",checkAuth);
 
 module.exports = router;

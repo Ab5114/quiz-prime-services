@@ -7,6 +7,7 @@ const mongoose = require("mongoose");
 const userRoutes = require("./routes/user");
 const cors = require("cors");
 const cookieParser = require("cookie-parser");
+const { authenticateUser } = require("./middleware/authentication");
 
 app.use(express.json());
 
@@ -35,7 +36,7 @@ mongoose
   .catch((err) => console.error("Error connecting to MongoDB", err));
 
 app.use("/user", userRoutes);
-
+ 
 const PORT = process.env.PORT || 5000;
 app.listen(process.env.PORT, () =>
   console.log(`Server running on PORT ${PORT}`)
