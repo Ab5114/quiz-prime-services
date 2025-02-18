@@ -14,7 +14,7 @@ app.use(express.json());
 app.use(cookieParser());
 const allowedOrigins = [
   "https://quizzy-prime.vercel.app",
-"  https://quiz-prime.vercel.app/",
+"https://quiz-prime.vercel.app",
   "https://quizzy-prime-git-master-ab5114s-projects.vercel.app",
   "http://localhost:3001",
   "http://localhost:3002",
